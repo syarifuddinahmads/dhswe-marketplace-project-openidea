@@ -5,6 +5,11 @@ go 1.21.5
 require github.com/labstack/echo/v4 v4.11.4
 
 require (
+	github.com/aws/aws-sdk-go v1.50.36 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+)
+
+require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
