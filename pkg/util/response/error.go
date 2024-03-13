@@ -40,7 +40,7 @@ type errorConstant struct {
 	Validation                  Error
 	InternalServerError         Error
 	EmailOrPasswordIncorrect    Error
-	UsernameOrpasswordIncorrect Error
+	UsernameOrPasswordIncorrect Error
 	ConvertionNotFound          Error
 	NotEnoughStock              Error
 }

@@ -3,9 +3,11 @@ package db
 import (
 	"fmt"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
+	// "gorm.io/driver/mysql"
+	// "gorm.io/driver/postgres"
+	// "gorm.io/gorm"
 )
 
 type (
@@ -17,31 +19,31 @@ type (
 		Name string
 	}
 
-	mysqlConfig struct {
-		dbConfig
-	}
+	// mysqlConfig struct {
+	// 	dbConfig
+	// }
 
 	postgresqlConfig struct {
 		dbConfig
 	}
 )
 
-func (conf mysqlConfig) Connect() {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		conf.User,
-		conf.Pass,
-		conf.Host,
-		conf.Port,
-		conf.Name,
-	)
+// func (conf mysqlConfig) Connect() {
+// 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+// 		conf.User,
+// 		conf.Pass,
+// 		conf.Host,
+// 		conf.Port,
+// 		conf.Name,
+// 	)
 
-	var err error
+// 	var err error
 
-	dbConn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-}
+// 	dbConn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// }
 
 func (conf postgresqlConfig) Connect() {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta",
@@ -54,7 +56,11 @@ func (conf postgresqlConfig) Connect() {
 
 	var err error
 
-	dbConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// dbConn, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// if err != nil {
+	// 	panic(err)
+	// }
+	dbConn, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
 		panic(err)
 	}

@@ -1,13 +1,14 @@
 package db
 
 import (
+	"github.com/jmoiron/sqlx"
 	"sync"
-
-	"gorm.io/gorm"
+	// "gorm.io/gorm"
 )
 
 var (
-	dbConn *gorm.DB
+	// dbConn *gorm.DB
+	dbConn *sqlx.DB
 	// we use sync.Once for make sure we create connection only once
 	once sync.Once
 )
@@ -37,12 +38,13 @@ func CreateConnection() {
 	once.Do(func() {
 		// mysql.Connect()
 		postgres.Connect()
+
 	})
 }
 
 // GetConnection is a faction for return connection or return value dbConn
 // because we set var dbConn is private
-func GetConnection() *gorm.DB {
+func GetConnection() *sqlx.DB {
 	if dbConn == nil {
 		CreateConnection()
 	}

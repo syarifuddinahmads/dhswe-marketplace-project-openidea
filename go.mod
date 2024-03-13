@@ -7,6 +7,8 @@ require github.com/labstack/echo/v4 v4.11.4
 require (
 	github.com/aws/aws-sdk-go v1.50.36 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/jmoiron/sqlx v1.3.5 // indirect
+	github.com/lib/pq v1.10.9 // indirect
 )
 
 require (
