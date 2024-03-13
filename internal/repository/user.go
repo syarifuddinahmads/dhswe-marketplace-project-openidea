@@ -14,6 +14,7 @@ type User interface {
 	FindAll(ctx context.Context, payload *dto.SearchGetRequest, p *dto.Pagination) ([]model.User, *dto.PaginationInfo, error)
 	FindByID(ctx context.Context, id uint) (model.User, error)
 	FindByEmail(ctx context.Context, email *string) (*model.User, error)
+	FindByUsername(ctx context.Context, username *string) (*model.User, error)
 }
 
 type user struct {
@@ -51,7 +52,7 @@ func (r *user) FindAll(ctx context.Context, payload *dto.SearchGetRequest, p *dt
 
 func (r *user) FindByID(ctx context.Context, id uint) (model.User, error) {
 	var user model.User
-	err := r.Db.WithContext(ctx).Model(&model.User{}).Where("id = ?", id).First(&user).Error
+	err := r.Db.WithContext(ctx).Model(&model.User{}).QueryRow("SELECT user_id, username, name from users where user_id = ?").Scan(&user).Error
 	return user, err
 }
 
@@ -69,7 +70,7 @@ func (r *user) FindByEmail(ctx context.Context, email *string) (*model.User, err
 func (r *user) FindByUsername(ctx context.Context username *string) (*model.User, error) {
 	conn := r.Db.WithContext(ctx)
 	var data model.User
-	err:= conn.QueryRow("SELECT user_id,username FROM users WHERE username = ?", username).Scan(&data)
+	err:= conn.QueryRow("SELECT user_id,username,name FROM users WHERE username = ?", username).Scan(&data)
 	if err != nil {
 		return nil, err
 	}
