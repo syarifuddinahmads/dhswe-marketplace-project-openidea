@@ -1,21 +1,29 @@
 package db
 
 import (
-	"sync"
+	"database/sql"
+	"fmt"
 
-	"gorm.io/gorm"
+	_ "github.com/lib/pq"
 )
 
-var (
-	dbConn *gorm.DB
-	// we use sync.Once for make sure we create connection only once
-	once sync.Once
-)
+func (conf dbConfig) ConnectDB() (*sql.DB, error) {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", conf.Host, conf.User, conf.Pass, conf.Name, conf.Port)
 
-// CreateConnection is a function for creating new connection with database
-// you can choose you want use mysql or postgresql
-func CreateConnection() {
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		return nil, err
+	}
 
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
+func CreateConnectionDB() {
 	cnf, err := NewParsedConfig()
 	if err != nil {
 		return
@@ -29,22 +37,18 @@ func CreateConnection() {
 		Name: cnf.Database.Name,
 	}
 
-	// mysql := mysqlConfig{dbConfig: conf}
-	// if you use postgres, you can uncomment code bellow
-
-	postgres := postgresqlConfig{dbConfig: conf}
-
 	once.Do(func() {
-		// mysql.Connect()
-		postgres.Connect()
+		var err error
+		dbConn, err = conf.ConnectDB()
+		if err != nil {
+			panic(err)
+		}
 	})
 }
 
-// GetConnection is a faction for return connection or return value dbConn
-// because we set var dbConn is private
-func GetConnection() *gorm.DB {
+func GetConnectionDB() *sql.DB {
 	if dbConn == nil {
-		CreateConnection()
+		CreateConnectionDB()
 	}
 	return dbConn
 }

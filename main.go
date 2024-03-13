@@ -18,7 +18,7 @@ func init() {
 
 func main() {
 
-	database.CreateConnection()
+	database.CreateConnectionDB()
 
 	f := factory.NewFactory()
 	e := echo.New()

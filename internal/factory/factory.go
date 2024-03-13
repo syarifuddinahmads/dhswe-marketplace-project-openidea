@@ -11,7 +11,7 @@ type Factory struct {
 }
 
 func NewFactory() *Factory {
-	db := database.GetConnection()
+	db := database.GetConnectionDB()
 	return &Factory{
 		ProductRepository: repository.NewProduct(db),
 		UserRepository:    repository.NewUser(db),
