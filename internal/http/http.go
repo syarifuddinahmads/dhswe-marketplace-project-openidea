@@ -9,7 +9,8 @@ import (
 )
 
 func NewHttp(e *echo.Echo, f *factory.Factory) {
-	auth.NewHandler(f).Route(e.Group("/auth"))
-	product.NewHandler(f).Route(e.Group("/products"))
-	user.NewHandler(f).Route(e.Group("/users"))
+	v1Group := e.Group("v1")
+	auth.NewHandler(f).Route(v1Group.Group("/user"))
+	product.NewHandler(f).Route(v1Group.Group("/products"))
+	user.NewHandler(f).Route(v1Group.Group("/users"))
 }
