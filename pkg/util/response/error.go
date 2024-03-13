@@ -31,17 +31,18 @@ const (
 )
 
 type errorConstant struct {
-	Duplicate                Error
-	NotFound                 Error
-	RouteNotFound            Error
-	UnprocessableEntity      Error
-	Unauthorized             Error
-	BadRequest               Error
-	Validation               Error
-	InternalServerError      Error
-	EmailOrPasswordIncorrect Error
-	ConvertionNotFound       Error
-	NotEnoughStock           Error
+	Duplicate                   Error
+	NotFound                    Error
+	RouteNotFound               Error
+	UnprocessableEntity         Error
+	Unauthorized                Error
+	BadRequest                  Error
+	Validation                  Error
+	InternalServerError         Error
+	EmailOrPasswordIncorrect    Error
+	UsernameOrpasswordIncorrect Error
+	ConvertionNotFound          Error
+	NotEnoughStock              Error
 }
 
 var ErrorConstant errorConstant = errorConstant{
@@ -60,6 +61,16 @@ var ErrorConstant errorConstant = errorConstant{
 			Meta: Meta{
 				Success: false,
 				Message: "Email or password is incorrect",
+			},
+			Error: E_BAD_REQUEST,
+		},
+		Code: http.StatusBadRequest,
+	},
+	UsernameOrPasswordIncorrect: Error{
+		Response: errorResponse{
+			Meta: Meta{
+				Success: false,
+				Message: "Username or password is incorrect",
 			},
 			Error: E_BAD_REQUEST,
 		},

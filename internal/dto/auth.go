@@ -6,7 +6,7 @@ import (
 
 // Login
 type AuthLoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
+	Username string `json:"username" validate:"required,username"`
 	Password string `json:"password" validate:"required"`
 }
 type AuthLoginResponse struct {

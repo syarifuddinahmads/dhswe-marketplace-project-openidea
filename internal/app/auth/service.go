@@ -28,13 +28,13 @@ func NewService(f *factory.Factory) *service {
 func (s *service) Login(ctx context.Context, payload *dto.AuthLoginRequest) (*dto.AuthLoginResponse, error) {
 	var result *dto.AuthLoginResponse
 
-	data, err := s.Repository.FindByEmail(ctx, &payload.Email)
+	data, err := s.Repository.FindByUsername(ctx, &payload.Username)
 	if data == nil {
-		return result, res.ErrorBuilder(&res.ErrorConstant.EmailOrPasswordIncorrect, err)
+		return result, res.ErrorBuilder(&res.ErrorConstant.UsernameOrPasswordIncorrect, err)
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(data.Password), []byte(payload.Password)); err != nil {
-		return result, res.ErrorBuilder(&res.ErrorConstant.EmailOrPasswordIncorrect, err)
+		return result, res.ErrorBuilder(&res.ErrorConstant.UsernameOrPasswordIncorrect, err)
 	}
 
 	token, err := data.GenerateToken()

@@ -65,3 +65,13 @@ func (r *user) FindByEmail(ctx context.Context, email *string) (*model.User, err
 	}
 	return &data, nil
 }
+
+func (r *user) FindByUsername(ctx context.Context username *string) (*model.User, error) {
+	conn := r.Db.WithContext(ctx)
+	var data model.User
+	err:= conn.QueryRow("SELECT user_id,username FROM users WHERE username = ?", username).Scan(&data)
+	if err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
