@@ -39,7 +39,7 @@ func (s *service) Find(ctx context.Context, payload *dto.SearchGetRequest) (*dto
 		datas = append(datas, dto.UserResponse{
 			ID:    user.ID,
 			Name:  user.Name,
-			Email: user.Email,
+			Username: user.Username,
 		})
 
 	}
@@ -65,7 +65,7 @@ func (s *service) FindByID(ctx context.Context, payload *dto.ByIDRequest) (*dto.
 	result = &dto.UserResponse{
 		ID:    data.ID,
 		Name:  data.Name,
-		Email: data.Email,
+		Username: data.Username,
 	}
 
 	return result, nil
