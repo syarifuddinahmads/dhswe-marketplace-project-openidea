@@ -52,15 +52,36 @@ func (s *service) Login(ctx context.Context, payload *dto.AuthLoginRequest) (*dt
 
 func (s *service) Register(ctx context.Context, payload *dto.AuthRegisterRequest) (*dto.AuthRegisterResponse, error) {
 	var result *dto.AuthRegisterResponse
-	var data model.User
 
-	// data.User = payload.UserEntity
-
-	// TODO create user
-
-	result = &dto.AuthRegisterResponse{
-		User: data,
+	// Create a model.User object with information received from the payload
+	bytes, _ := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	payload.Password = string(bytes)
+	user := model.User{
+		Name:     payload.Name,
+		Username: payload.Username,
+		Password: payload.Password,
 	}
 
+	// Call the Repository method to register the user
+	err := s.Repository.Register(ctx, user)
+	if err != nil {
+		// Handle error and return the appropriate response
+		return nil, res.ErrorBuilder(&res.ErrorConstant.InternalServerError, err)
+	}
+
+	// Generate a token for the registered user
+	token, err := user.GenerateToken()
+	if err != nil {
+		return result, res.ErrorBuilder(&res.ErrorConstant.InternalServerError, err)
+	}
+
+	// Create the AuthRegisterResponse using the user and token
+	result = &dto.AuthRegisterResponse{
+		User:  user,
+		Token: token,
+	}
+
+	// Return the successful result
 	return result, nil
+
 }

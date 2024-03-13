@@ -17,8 +17,11 @@ type AuthLoginResponse struct {
 
 // Register
 type AuthRegisterRequest struct {
-	model.User
+	Username string `json:"username" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 type AuthRegisterResponse struct {
 	model.User
+	Token string `json:"token"`
 }

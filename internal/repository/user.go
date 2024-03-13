@@ -13,6 +13,7 @@ type User interface {
 	FindAll(ctx context.Context, payload *dto.SearchGetRequest, p *dto.Pagination) ([]model.User, *dto.PaginationInfo, error)
 	FindByID(ctx context.Context, id uint) (model.User, error)
 	FindByEmail(ctx context.Context, email *string) (*model.User, error)
+	Register(ctx context.Context, data model.User) error
 }
 
 type user struct {
@@ -84,4 +85,10 @@ func (r *user) FindByEmail(ctx context.Context, email *string) (*model.User, err
 		return nil, nil
 	}
 	return &user, err
+}
+
+func (r *user) Register(ctx context.Context, data model.User) error {
+	query := "INSERT INTO users (name, username, password) VALUES ($1, $2, $3)"
+	_, err := r.Db.ExecContext(ctx, query, data.Name, data.Username, data.Password)
+	return err
 }
