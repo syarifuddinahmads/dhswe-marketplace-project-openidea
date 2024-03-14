@@ -1,4 +1,4 @@
-package app
+package http
 
 import (
 	"context"
@@ -15,6 +15,7 @@ import (
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/app/bank"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/app/todo"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/configs"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/factory"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/db"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils"
 )
@@ -50,6 +51,8 @@ func NewServer() (*Server, error) {
 	// Register existing routes
 	todoHandler.RegisterRoutes()
 	bankHandler.RegisterRoutes()
+	handlerFactory := factory.NewHandlerFactory(router, log, database)
+	handlerFactory.RegisterHandlers()
 
 	s := Server{
 		logger: log,

@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/app"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/http"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 }
 
 func run(ctx context.Context) error {
-	server, err := app.NewServer()
+	server, err := http.NewServer()
 	if err != nil {
 		return err
 	}

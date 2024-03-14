@@ -8,45 +8,62 @@ import (
 	"net/http"
 )
 
-/*
-Don’t have to repeat yourself every time you respond to user, instead you can use some helper functions.
-*/
+type Pagination struct {
+	Limit  int `json:"limit"`
+	Offset int `json:"offset"`
+	Total  int `json:"total"`
+}
+
+type ResponseFormat struct {
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+	Meta    Pagination  `json:"meta"`
+}
+
 func Respond(w http.ResponseWriter, data interface{}, status int) {
 	var respData interface{}
+	var message string
+
 	switch v := data.(type) {
 	case nil:
+		message = "success"
 	case ErrArgument:
 		status = http.StatusBadRequest
 		respData = ErrorResponse{ErrorMessage: v.Unwrap().Error()}
+		message = "error"
 	case error:
 		if http.StatusText(status) == "" {
 			status = http.StatusInternalServerError
 		} else {
 			respData = ErrorResponse{ErrorMessage: v.Error()}
 		}
+		message = "error"
 	default:
 		respData = data
+		message = "success"
+	}
+
+	response := ResponseFormat{
+		Message: message,
+		Data:    respData,
 	}
 
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
 	if data != nil {
-		err := json.NewEncoder(w).Encode(respData)
+		err := json.NewEncoder(w).Encode(response)
 		if err != nil {
-			http.Error(w, "Could not encode in json", http.StatusBadRequest)
+			http.Error(w, "Could not encode in JSON", http.StatusInternalServerError)
 			return
 		}
 	}
 }
 
-// It does not read to the memory, instead it will read it to the given 'v' interface.
 func Decode(r *http.Request, v interface{}) error {
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
-// It reads to the memory.
 func ReadRequestBody(r *http.Request) ([]byte, error) {
-	// Read the content
 	var bodyBytes []byte
 	var err error
 	if r.Body != nil {
@@ -59,10 +76,6 @@ func ReadRequestBody(r *http.Request) ([]byte, error) {
 	return bodyBytes, nil
 }
 
-// Will place the body bytes back to the request body which could be read in subsequent calls on Handlers.
-// For example, you have more than 1 middleware and each of them needs to read the body. If the first middleware read the body,
-// the second one won't be able to read it unless you put the request body back.
 func RestoreRequestBody(r *http.Request, bodyBytes []byte) {
-	// Restore the io.ReadCloser to its original state
 	r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 }
