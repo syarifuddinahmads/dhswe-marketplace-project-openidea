@@ -12,9 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/app/bank"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/app/todo"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/configs"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/db/configs"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/factory"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/db"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils"
@@ -45,12 +43,6 @@ func NewServer() (*Server, error) {
 
 	log := utils.NewLogger()
 	router := mux.NewRouter()
-	// Initialize todo handler
-	todoHandler := todo.NewHandler(router, log, database)
-	bankHandler := bank.NewHandler(router, log, database)
-	// Register existing routes
-	todoHandler.RegisterRoutes()
-	bankHandler.RegisterRoutes()
 	handlerFactory := factory.NewHandlerFactory(router, log, database)
 	handlerFactory.RegisterHandlers()
 
