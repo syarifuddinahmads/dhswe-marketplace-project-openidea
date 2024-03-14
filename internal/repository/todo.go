@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/todo/model"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/model"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/db"
 )
 
