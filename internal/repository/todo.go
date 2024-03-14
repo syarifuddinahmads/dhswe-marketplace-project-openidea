@@ -4,18 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/model"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/db"
 )
-
-type Repository struct {
-	Db *sqlx.DB
-}
-
-func NewRepository(db *sqlx.DB) Repository {
-	return Repository{Db: db}
-}
 
 func (r Repository) Find(ctx context.Context, id int) (model.ToDo, error) {
 	entity := model.ToDo{}
