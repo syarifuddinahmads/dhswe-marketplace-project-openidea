@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/dto"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/model"
@@ -16,21 +17,24 @@ import (
 // 	return entity, err
 // }
 
-func (r Repository) CreateBank(ctx context.Context, params *dto.CreateBankParams) error {
+func (r Repository) CreateBank(ctx context.Context, entity *dto.BankAccountRequest) (*model.BankAccount, error) {
 	query := `INSERT INTO bank_accounts (bank_name, bank_account_name, bank_account_number)
 				VALUES (:bank_name, :bank_account_name, :bank_account_number);`
-	rows, err := r.Db.NamedQueryContext(ctx, query, params)
+	rows, err := r.Db.NamedQueryContext(ctx, query, entity)
+	var bank model.BankAccount
 	if err != nil {
-		return err
+		fmt.Println("Repo bank 1")
+		return nil, err
 	}
-
 	for rows.Next() {
-		err = rows.StructScan(params)
+		err = rows.StructScan(entity)
 		if err != nil {
-			return err
+			fmt.Println("Repo bank 2")
+
+			return nil, err
 		}
 	}
-	return err
+	return &bank, nil
 }
 
 func (r Repository) UpdateBank(ctx context.Context, entity model.BankAccount) error {

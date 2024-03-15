@@ -11,10 +11,10 @@ import (
 
 func (s service) CreateBank(w http.ResponseWriter, r *http.Request) {
 	// Parse request body
-	var payload dto.CreateBankParams
+	var payload dto.BankAccountRequest
 	err := utils.Decode(r, &payload)
 	if err != nil {
-		fmt.Println("Bank Account 1")
+		fmt.Println("Handler bank 1")
 		response.ErrorBuilder(&response.ErrorConstant.BadRequest, err).Send(w)
 		return
 	}
@@ -22,7 +22,7 @@ func (s service) CreateBank(w http.ResponseWriter, r *http.Request) {
 	// Call your service to handle login
 	data, err := s.BankAccountService.CreateBank(r.Context(), &payload)
 	if err != nil {
-		fmt.Println("Bank Account 2")
+		fmt.Println("Handler bank 2")
 		response.ErrorResponse(err).Send(w)
 		return
 	}

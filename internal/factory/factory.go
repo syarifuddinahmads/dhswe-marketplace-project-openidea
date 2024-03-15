@@ -33,8 +33,10 @@ func (hf *HandlerFactory) RegisterHandlers() {
 
 	v1Router := hf.Router.PathPrefix("/" + hf.VersionPrefix + "/").Subrouter()
 	v1Router.Use(middleware.JwtMiddleware())
+
 	todoHandler := todo.NewHandler(v1Router, hf.Logger, hf.Database)
 	todoHandler.RegisterRoutes()
+
 	bankAccountHandler := bank_account.NewHandler(v1Router, hf.Logger, hf.Database)
 	bankAccountHandler.RegisterRoutes()
 

@@ -1,13 +1,13 @@
 package dto
 
-type CreateBankParams struct {
-	BankName          string `valid:"required"`
-	BankAccountName   string `valid:"required"`
-	BankAccountNumber string `valid:"required"`
+type BankAccountRequest struct {
+	Bank_Name           string `valid:"required"`
+	Bank_Account_Name   string `valid:"required"`
+	Bank_Account_Number string `valid:"required"`
 }
 
 type BankAccountResponse struct {
-	BankName          string `json:"bank_name"`
-	BankAccountName   string `json:"bank_account_name"`
-	BankAccountNumber string `json:"bank_account_number"`
+	Bank_Name           string `json:"bank_name"`
+	Bank_Account_Name   string `json:"bank_account_name"`
+	Bank_Account_Number string `json:"bank_account_number"`
 }

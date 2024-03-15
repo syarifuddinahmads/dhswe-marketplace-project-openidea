@@ -2,11 +2,10 @@ package bank_account
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/dto"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/repository"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils/response"
 )
 
@@ -20,29 +19,19 @@ func NewService(r repository.Repository) Service {
 	}
 }
 
-func (s *Service) CreateBank(ctx context.Context, params *dto.CreateBankParams) (*dto.BankAccountResponse, error) {
-	if _, err := govalidator.ValidateStruct(params); err != nil {
-		return nil, utils.ErrArgument{Wrapped: err}
-	}
-
-	tx, err := s.repo.Db.BeginTxx(ctx, nil)
+func (s *Service) CreateBank(ctx context.Context, payload *dto.BankAccountRequest) (*dto.BankAccountResponse, error) {
+	// Call the repository Register function
+	data, err := s.repo.CreateBank(ctx, payload)
+	fmt.Println(err)
 	if err != nil {
-		return nil, response.ErrorBuilder(&response.ErrorConstant.InternalServerError, err)
-	}
-	// Defer a rollback in case anything fails.
-	defer tx.Rollback()
-
-	err = s.repo.CreateBank(ctx, params)
-	if err != nil {
+		fmt.Println("Service bank 1")
 		return nil, response.ErrorBuilder(&response.ErrorConstant.InternalServerError, err)
 	}
 
-	err = tx.Commit()
 	result := &dto.BankAccountResponse{
-		BankName:          params.BankName,
-		BankAccountName:   params.BankAccountName,
-		BankAccountNumber: params.BankAccountNumber,
+		Bank_Name: data.BankName,
 	}
+
 	return result, nil
 }
 
