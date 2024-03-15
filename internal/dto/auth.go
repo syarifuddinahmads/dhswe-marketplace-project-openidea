@@ -12,9 +12,9 @@ type AuthLoginResponse struct {
 
 // Register
 type AuthRegisterRequest struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Name     string `json:"name" validate:"required"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 type AuthRegisterResponse struct {
 	Name        string `json:"name"`
