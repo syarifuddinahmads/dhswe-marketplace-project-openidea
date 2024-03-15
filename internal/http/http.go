@@ -16,6 +16,7 @@ import (
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/factory"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/db"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils/constant"
 )
 
 type Server struct {
@@ -43,7 +44,7 @@ func NewServer() (*Server, error) {
 
 	log := utils.NewLogger()
 	router := mux.NewRouter()
-	handlerFactory := factory.NewHandlerFactory(router, log, database)
+	handlerFactory := factory.NewHandlerFactory(router, log, database, constant.API_VERSION)
 	handlerFactory.RegisterHandlers()
 
 	s := Server{

@@ -3,7 +3,8 @@ package model
 import (
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils/constant"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,9 +23,6 @@ func (u *User) HashPassword() {
 
 // GenerateToken is a method for struct User for creating new jwt token
 func (u *User) GenerateToken() (string, error) {
-	var (
-		jwtKey = "dhsw-marketplace-project-openidea-2024"
-	)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id":  u.UserId,
@@ -33,6 +31,6 @@ func (u *User) GenerateToken() (string, error) {
 		"exp":      time.Now().Add(time.Hour * 72).Unix(), // we set expired in 72 hour
 	})
 
-	tokenString, err := token.SignedString([]byte(jwtKey))
+	tokenString, err := token.SignedString([]byte(constant.JWT_SECRET))
 	return tokenString, err
 }
