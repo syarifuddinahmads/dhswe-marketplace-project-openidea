@@ -21,7 +21,7 @@ func (s Service) IndexProduct(ctx context.Context) ([]model.Product, error) {
 	return []model.Product{}, ctx.Err()
 }
 
-func (s Service) StoreProduct(ctx context.Context, params UpdateParams) (string, error) {
+func (s Service) StoreProduct(ctx context.Context, params *model.Product) (string, error) {
 	return "", ctx.Err()
 }
 
@@ -29,7 +29,7 @@ func (s Service) ShowProduct(ctx context.Context, id int) (model.Product, error)
 	return model.Product{}, ctx.Err()
 }
 
-func (s Service) UpdateProduct(ctx context.Context, params UpdateParams) (string, error) {
+func (s Service) UpdateProduct(ctx context.Context, params *model.Product) (string, error) {
 	return "", ctx.Err()
 }
 
