@@ -2,13 +2,11 @@ package auth
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/dto"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/model"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/repository"
-	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils/response"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,78 +20,59 @@ func NewService(r repository.Repository) Service {
 	}
 }
 
-func (s *Service) RegisterUser(ctx context.Context, params dto.CreateUserParams) (int, error) {
-	// Validate input parameters
-	if _, err := govalidator.ValidateStruct(params); err != nil {
-		return 0, utils.ErrArgument{Wrapped: err}
+func (s *Service) Login(ctx context.Context, payload *dto.AuthLoginRequest) (*dto.AuthLoginResponse, error) {
+	var result *dto.AuthLoginResponse
+
+	data, err := s.repo.FindByUsername(ctx, payload.Username)
+
+	if data == nil {
+		return result, response.ErrorBuilder(&response.ErrorConstant.UsernameOrPasswordIncorrect, err)
 	}
 
-	// Check password length
-	if len(params.Password) < 5 || len(params.Password) > 15 {
-		return 0, errors.New("password length must be between 5 and 15 characters")
+	if err = bcrypt.CompareHashAndPassword([]byte(data.Password), []byte(payload.Password)); err != nil {
+		return result, response.ErrorBuilder(&response.ErrorConstant.UsernameOrPasswordIncorrect, err)
 	}
 
-	// Start a transaction
-	tx, err := s.repo.Db.BeginTxx(ctx, nil)
+	token, err := data.GenerateToken()
 	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		// Rollback the transaction if there's an error and it hasn't been committed
-		if err != nil {
-			_ = tx.Rollback()
-		}
-	}()
-
-	// Hash the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return 0, err
+		return result, response.ErrorBuilder(&response.ErrorConstant.InternalServerError, err)
 	}
 
-	// Truncate hashed password to 15 characters
-	truncatedHash := string(hashedPassword)[:15]
-
-	// Create a User entity with the hashed password
-	entity := model.User{
-		Name:     params.Name,
-		Username: params.Username,
-		Password: truncatedHash,
+	result = &dto.AuthLoginResponse{
+		AccessToken: token,
+		Username:    data.Username,
+		Name:        data.Name,
 	}
 
-	// Call the repository method to create the user
-	err = s.repo.Register(ctx, &entity)
-	if err != nil {
-		return 0, err
-	}
-
-	// Commit the transaction
-	err = tx.Commit()
-	if err != nil {
-		return 0, err
-	}
-
-	return entity.UserId, nil
+	return result, nil
 }
 
-func (s *Service) LoginUser(ctx context.Context, params dto.AuthLoginRequest) (bool, error) {
-	// Fetch the user from the repository based on the username
-	user, err := s.repo.GetUserByUsername(ctx, params.Username)
+func (s *Service) Register(ctx context.Context, payload *dto.AuthRegisterRequest) (*dto.AuthRegisterResponse, error) {
+	// Hash the password using bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return false, err
+		return nil, fmt.Errorf("error hashing password: %v", err)
 	}
 
-	// Check if the user exists
-	if user == nil {
-		return false, nil // User not found
+	// Replace the plain text password with the hashed password
+	payload.Password = string(hashedPassword)
+
+	// Call the repository Register function
+	data, err := s.repo.Register(ctx, payload)
+	if err != nil {
+		return nil, response.ErrorBuilder(&response.ErrorConstant.InternalServerError, err)
 	}
 
-	// Compare the provided password with the hashed password stored in the database
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(params.Password)); err != nil {
-		// Passwords don't match
-		return false, nil
+	token, err := data.GenerateToken()
+	if err != nil {
+		return nil, response.ErrorBuilder(&response.ErrorConstant.InternalServerError, err)
 	}
 
-	// Passwords match, user is authenticated
-	return true, nil
+	result := &dto.AuthRegisterResponse{
+		AccessToken: token,
+		Username:    payload.Username,
+		Name:        payload.Name,
+	}
+
+	return result, nil
 }

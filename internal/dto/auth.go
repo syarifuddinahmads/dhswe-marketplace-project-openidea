@@ -1,20 +1,23 @@
 package dto
 
-import "github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/model"
-
 type AuthLoginRequest struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 type AuthLoginResponse struct {
-	Token string `json:"token"`
-	model.User
+	Name        string `json:"name"`
+	Username    string `json:"username"`
+	AccessToken string `json:"accessToken"`
 }
 
 // Register
 type AuthRegisterRequest struct {
-	model.User
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 type AuthRegisterResponse struct {
-	model.User
+	Name        string `json:"name"`
+	Username    string `json:"username"`
+	AccessToken string `json:"accessToken"`
 }

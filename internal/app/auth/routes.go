@@ -35,6 +35,6 @@ func NewHandler(r *mux.Router, lg *logrus.Logger, db *sqlx.DB) service {
 }
 
 func (s *service) RegisterRoutes() {
-	s.router.HandleFunc("/login", s.Login()).Methods("POST")
-	s.router.HandleFunc("/register", s.Register()).Methods("POST")
+	s.router.HandleFunc("/login", s.Login).Methods("POST")
+	s.router.HandleFunc("/register", s.Register).Methods("POST")
 }

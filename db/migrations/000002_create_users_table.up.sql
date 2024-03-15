@@ -1,8 +1,8 @@
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    username VARCHAR(15) NOT NULL CHECK (LENGTH(username) >= 5 AND LENGTH(username) <= 15),
-    name VARCHAR(50) NOT NULL CHECK (LENGTH(name) >= 5 AND LENGTH(name) <= 50),
-    password VARCHAR(15) NOT NULL CHECK (LENGTH(password) >= 5 AND LENGTH(password) <= 15),
+    username VARCHAR(15) NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP

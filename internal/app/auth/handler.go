@@ -6,69 +6,47 @@ import (
 
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/dto"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils/response"
 )
 
-func (s service) Register() http.HandlerFunc {
-	type request struct {
-		Name     string `json:"name"`
-		Username string `json:"username"`
-		Password string `json:"password"`
+func (s service) Login(w http.ResponseWriter, r *http.Request) {
+	// Parse request body
+	var payload dto.AuthLoginRequest
+	err := utils.Decode(r, &payload)
+	if err != nil {
+		fmt.Println("Login Handle 1")
+		response.ErrorBuilder(&response.ErrorConstant.BadRequest, err).Send(w)
+		return
 	}
 
-	type response struct {
-		ID int `json:"id"`
+	// Call your service to handle login
+	data, err := s.userService.Login(r.Context(), &payload)
+	if err != nil {
+		fmt.Println("Login Handle 2")
+		response.ErrorResponse(err).Send(w)
+		return
 	}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := request{}
-		err := utils.Decode(r, &req)
-		if err != nil {
-			utils.Respond(w, err, 0)
-			return
-		}
-
-		id, err := s.userService.RegisterUser(r.Context(), dto.CreateUserParams{
-			Name:     req.Name,
-			Username: req.Username,
-			Password: req.Password,
-		})
-		if err != nil {
-			fmt.Println("Error Register")
-			utils.Respond(w, err, 0)
-			return
-		}
-		utils.Respond(w, response{ID: id}, http.StatusOK)
-	}
+	// Send success response
+	response.SuccessResponse(data).Send(w)
 }
 
-func (s service) Login() http.HandlerFunc {
-	type request struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+func (s service) Register(w http.ResponseWriter, r *http.Request) {
+	// Parse request body
+	var payload dto.AuthRegisterRequest
+	err := utils.Decode(r, &payload)
+	if err != nil {
+		response.ErrorBuilder(&response.ErrorConstant.BadRequest, err).Send(w)
+		return
 	}
 
-	type response struct {
-		ID bool `json:"id"`
+	// Call your service to handle login
+	data, err := s.userService.Register(r.Context(), &payload)
+	if err != nil {
+		response.ErrorResponse(err).Send(w)
+		return
 	}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := request{}
-		err := utils.Decode(r, &req)
-		if err != nil {
-			utils.Respond(w, err, 0)
-			return
-		}
-
-		id, err := s.userService.LoginUser(r.Context(), dto.AuthLoginRequest{
-			Username: req.Username,
-			Password: req.Password,
-		})
-
-		if err != nil {
-			fmt.Println("Error Register")
-			utils.Respond(w, err, 0)
-			return
-		}
-		utils.Respond(w, response{ID: id}, http.StatusOK)
-	}
+	// Send success response
+	response.SuccessResponse(data).Send(w)
 }

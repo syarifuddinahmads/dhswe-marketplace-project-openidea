@@ -1,7 +1,6 @@
 package model
 
 import (
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -12,7 +11,7 @@ type User struct {
 	UserId   int    `json:"user_id"`
 	Name     string `json:"name;size:200;not null"`
 	Username string `json:"username;size:200;not null;unique"`
-	Password string `json:"password,omitempty"`
+	Password string `json:"password"`
 }
 
 // HashPassword is a method for struct User for Hashing password
@@ -24,7 +23,7 @@ func (u *User) HashPassword() {
 // GenerateToken is a method for struct User for creating new jwt token
 func (u *User) GenerateToken() (string, error) {
 	var (
-		jwtKey = os.Getenv("JWT_SECRET")
+		jwtKey = "dhsw-marketplace-project-openidea-2024"
 	)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
