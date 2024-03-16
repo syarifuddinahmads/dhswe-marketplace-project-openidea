@@ -35,9 +35,9 @@ func NewHandler(r *mux.Router, lg *logrus.Logger, db *sqlx.DB) service {
 }
 
 func (s *service) RegisterRoutes() {
-	s.router.HandleFunc("/product", s.IndexProduct()).Methods("POST")
-	s.router.HandleFunc("/product/{id}", s.ShowProduct()).Methods("POST")
-	s.router.HandleFunc("/product", s.StoreProduct()).Methods("POST")
-	s.router.HandleFunc("/product/{id}", s.UpdateProduct()).Methods("PATCH")
-	s.router.HandleFunc("/product/{id}", s.DeleteProduct()).Methods("DELETE")
+	s.router.HandleFunc("/product", s.IndexProduct()).Methods("GET")
+	s.router.HandleFunc("/product/{id}", s.ShowProduct()).Methods("GET")
+	s.router.HandleFunc("/product", s.StoreProduct).Methods("POST")
+	s.router.HandleFunc("/product/{id}", s.UpdateProduct).Methods("PATCH")
+	s.router.HandleFunc("/product/{id}", s.DeleteProduct).Methods("DELETE")
 }
