@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/app/auth"
+	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/app/product"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/internal/app/todo"
 	"github.com/syarifuddinahmads/dhswe-marketplace-project-openidea/pkg/utils/middleware"
 )
@@ -34,4 +35,7 @@ func (hf *HandlerFactory) RegisterHandlers() {
 	v1Router.Use(middleware.JwtMiddleware())
 	todoHandler := todo.NewHandler(v1Router, hf.Logger, hf.Database)
 	todoHandler.RegisterRoutes()
+
+	productHandler := product.NewHandler(v1Router, hf.Logger, hf.Database)
+	productHandler.RegisterRoutes()
 }
